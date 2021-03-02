@@ -1,26 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
 
-function App() {
+import * as utils from "./utils/index";
+
+import React, { ChangeEvent, useEffect, useState } from "react";
+
+const App = () => {
+  const [tableData, setTableData] = useState<any>();
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const rawData = await utils.fetchRawCSV();
+  //     const data = await utils.parseCSV(rawData);
+  //     setTableData(data);
+  //   };
+  //   fetchData();
+  // }, []);
+
+  const handler = async (path: any) => {
+    // const rawData = await utils.fetchRawCSV(path);
+    // console.log(rawData);
+    const data = await utils.parseCSV(path);
+    console.log(data);
+    // setTableData(data);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <label>
+        <input
+          style={{ display: "none" }}
+          type={"file"}
+          onChange={(e: ChangeEvent) => {
+            const target = e.target as HTMLInputElement;
+            const file: File = (target.files as FileList)[0];
+
+            handler(file);
+          }}
+        />
+        Upload CSV
+      </label>
+      {tableData && (
+        <table>
+          <thead>
+            <tr>
+              {tableData.data[0].map((x: string) => (
+                <td>{x}</td>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {console.log(tableData.data[0])}
+            <tr></tr>
+          </tbody>
+        </table>
+      )}
     </div>
   );
-}
+};
 
 export default App;
