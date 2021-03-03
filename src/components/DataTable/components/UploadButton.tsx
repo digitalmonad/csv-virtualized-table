@@ -9,7 +9,7 @@ type UploadButtonPropsT = {
 export const UploadButton: FC<UploadButtonPropsT> = ({ onChange }) => (
   <Root>
     <HiddenInput type={"file"} {...{ onChange }} />
-    Upload CSV
+    Upload .csv
   </Root>
 );
 

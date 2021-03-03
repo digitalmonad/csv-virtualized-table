@@ -1,22 +1,40 @@
 import * as utils from "../../utils";
 
 import React, { ChangeEvent, useEffect, useState } from "react";
+import { useBlockLayout, useTable } from "react-table";
 
+import { Table } from "../WindowTable";
 import { UploadButton } from "./components/UploadButton";
 import styled from "styled-components";
 
 export const DataTable = () => {
   const [tableRows, setTableRows] = useState<any>();
-  const [tableHeaders, setTableHeaders] = useState<any>();
+  const [tableColumns, setTableColumns] = useState<any>();
 
   const parse = async (path: any) => {
     const parseResult = await utils.parseCSV(path);
 
-    const [headers, ...rows] = parseResult.data;
-    setTableHeaders(headers);
+    const [columns, ...rows] = parseResult.data;
+    setTableColumns(columns);
 
     setTableRows(rows);
   };
+
+  const preprocessTableColumns = () =>
+    tableColumns
+      ? tableColumns.map((x: string) => ({ Header: x, accessor: x }))
+      : [];
+
+  const preprocessTableRows = () =>
+    tableRows
+      ? tableRows.map((x: any, index: number) => {
+          const obj: { [key: string]: string } = {};
+          x.forEach((x: string, index: number): void => {
+            obj[tableColumns[index]] = x;
+          });
+          return obj;
+        })
+      : [{}];
 
   const handleFileUpload = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
@@ -24,6 +42,9 @@ export const DataTable = () => {
 
     parse(file);
   };
+  const columns = React.useMemo(() => preprocessTableColumns(), [tableColumns]);
+
+  const data = React.useMemo(() => preprocessTableRows(), [tableRows]);
 
   return (
     <Root>
@@ -31,39 +52,25 @@ export const DataTable = () => {
         <UploadButton onChange={handleFileUpload} />
       </Controls>
       <Content>
-        {tableHeaders && tableRows ? (
-          <table>
-            <thead>
-              <tr>
-                {tableHeaders.map((x: string) => (
-                  <td>{x}</td>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {tableRows.map((row: any) => {
-                return (
-                  <tr>
-                    {row.map((x: string) => (
-                      <td>{x}</td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        {columns.length > 1 && data.length > 1 ? (
+          <Table {...{ columns, data }} />
         ) : (
-          <div>Please upload data</div>
+          <NoDataWrapper>
+            No data to show :( Please press "Upload .csv" button to load some...
+          </NoDataWrapper>
         )}
       </Content>
     </Root>
   );
 };
 
+const NoDataWrapper = styled.div``;
+
 const Root = styled.div`
   background-color: white;
   height: 100vh;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   @media (min-width: 768px) {
     border-radius: 10px;
@@ -72,14 +79,39 @@ const Root = styled.div`
 `;
 
 const Content = styled.div`
+  overflow: scroll;
   @media (min-width: 768px) {
     border-radius: 10px;
+  }
+
+  .table {
+    display: inline-block;
+    border-spacing: 0;
+    .tr {
+      :last-child {
+        .td {
+          border-bottom: 0;
+        }
+      }
+    }
+
+    .th,
+    .td {
+      margin: 0;
+      padding: 0.5rem;
+      border-bottom: 1px solid #dbdbdb;
+      border-right: 1px solid #dbdbdb;
+
+      :last-child {
+        border-right: 1px solid #dbdbdb;
+      }
+    }
   }
 `;
 
 const Controls = styled.div`
   display: flex;
   justify-content: flex-end;
-  border-bottom: 1px solid #dbdbdb;
   padding: 20px;
+  border-bottom: 1px solid #dbdbdb;
 `;
