@@ -1,7 +1,14 @@
 ## Experimental React component, with which you can upload arbitrary .csv dataset.
 
-Then this data is then parsed and displayed as a table with headers and cells.
+Then this data is parsed and displayed as a table with headers and cells.
 Only rule is that the .csv file MUST contain first row with names of the headers.
+
+In case you don't have your own data, there are two well known datasets included in "/public/data":
+
+- [Iris](https://en.wikipedia.org/wiki/Iris_flower_data_set)
+- [Titanic](https://en.wikipedia.org/wiki/Passengers_of_the_Titanic)
+
+I used [react-virtualized](https://github.com/bvaughn/react-virtualized) to ease browser with rendering large amounts of data and handy [papaparse](https://www.papaparse.com/) for parsing .csv files.
 
 # Getting Started with Create React App
 
