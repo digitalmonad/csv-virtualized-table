@@ -2,6 +2,7 @@ import { useBlockLayout, useTable } from "react-table";
 
 import { FixedSizeList } from "react-window";
 import React from "react";
+import styled from "styled-components";
 
 const scrollbarWidth = () => {
   const scrollDiv = document.createElement("div");
@@ -15,7 +16,13 @@ const scrollbarWidth = () => {
   return scrollbarWidth;
 };
 
-export function Table({ columns, data }: { columns: any; data: any }) {
+export const ReactWindowTable = ({
+  columns,
+  data,
+}: {
+  columns: any;
+  data: any;
+}) => {
   // Use the state and functions returned from useTable to build your UI
 
   const defaultColumn = React.useMemo(
@@ -52,11 +59,11 @@ export function Table({ columns, data }: { columns: any; data: any }) {
           {...row.getRowProps({
             style,
           })}
-          className='tr'
+          className='table-row'
         >
           {row.cells.map((cell) => {
             return (
-              <div {...cell.getCellProps()} className='td'>
+              <div {...cell.getCellProps()} className='table-data'>
                 {cell.render("Cell")}
               </div>
             );
@@ -69,12 +76,12 @@ export function Table({ columns, data }: { columns: any; data: any }) {
 
   // Render the UI for your table
   return (
-    <div {...getTableProps()} className='table'>
+    <Root {...getTableProps()} className='table'>
       <div>
         {headerGroups.map((headerGroup) => (
-          <div {...headerGroup.getHeaderGroupProps()} className='tr'>
+          <div {...headerGroup.getHeaderGroupProps()} className='table-row'>
             {headerGroup.headers.map((column) => (
-              <div {...column.getHeaderProps()} className='th'>
+              <div {...column.getHeaderProps()} className='table-head'>
                 {column.render("Header")}
               </div>
             ))}
@@ -92,6 +99,30 @@ export function Table({ columns, data }: { columns: any; data: any }) {
           {RenderRow}
         </FixedSizeList>
       </div>
-    </div>
+    </Root>
   );
-}
+};
+
+const Root = styled.div`
+  display: inline-block;
+  border-spacing: 0;
+  .table-row {
+    :last-child {
+      .table-data {
+        border-bottom: 0;
+      }
+    }
+  }
+
+  .table-head,
+  .table-data {
+    margin: 0;
+    padding: 0.5rem;
+    border-bottom: 1px solid #dbdbdb;
+    border-right: 1px solid #dbdbdb;
+
+    :last-child {
+      border-right: 1px solid #dbdbdb;
+    }
+  }
+`;

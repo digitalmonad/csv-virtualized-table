@@ -1,9 +1,8 @@
 import * as utils from "../../utils";
 
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { useBlockLayout, useTable } from "react-table";
+import React, { ChangeEvent, useMemo, useState } from "react";
 
-import { Table } from "../WindowTable";
+import { ReactWindowTable } from "./components/ReactWindowTable";
 import { UploadButton } from "./components/UploadButton";
 import styled from "styled-components";
 
@@ -13,10 +12,8 @@ export const DataTable = () => {
 
   const parse = async (path: any) => {
     const parseResult = await utils.parseCSV(path);
-
     const [columns, ...rows] = parseResult.data;
     setTableColumns(columns);
-
     setTableRows(rows);
   };
 
@@ -39,12 +36,11 @@ export const DataTable = () => {
   const handleFileUpload = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
     const file: File = (target.files as FileList)[0];
-
     parse(file);
   };
-  const columns = React.useMemo(() => preprocessTableColumns(), [tableColumns]);
 
-  const data = React.useMemo(() => preprocessTableRows(), [tableRows]);
+  const columns = useMemo<any>(preprocessTableColumns, [tableColumns]);
+  const data = useMemo<any>(preprocessTableRows, [tableRows, tableColumns]);
 
   return (
     <Root>
@@ -53,10 +49,11 @@ export const DataTable = () => {
       </Controls>
       <Content>
         {columns.length > 1 && data.length > 1 ? (
-          <Table {...{ columns, data }} />
+          <ReactWindowTable {...{ columns, data }} />
         ) : (
           <NoDataWrapper>
-            No data to show :( Please press "Upload .csv" button to load some...
+            <h4>No data to show :(</h4>
+            <p>Please press "Upload .csv" button to load some...</p>
           </NoDataWrapper>
         )}
       </Content>
@@ -64,7 +61,10 @@ export const DataTable = () => {
   );
 };
 
-const NoDataWrapper = styled.div``;
+const NoDataWrapper = styled.div`
+  padding: 30px;
+  text-align: center;
+`;
 
 const Root = styled.div`
   background-color: white;
@@ -82,30 +82,6 @@ const Content = styled.div`
   overflow: scroll;
   @media (min-width: 768px) {
     border-radius: 10px;
-  }
-
-  .table {
-    display: inline-block;
-    border-spacing: 0;
-    .tr {
-      :last-child {
-        .td {
-          border-bottom: 0;
-        }
-      }
-    }
-
-    .th,
-    .td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid #dbdbdb;
-      border-right: 1px solid #dbdbdb;
-
-      :last-child {
-        border-right: 1px solid #dbdbdb;
-      }
-    }
   }
 `;
 
