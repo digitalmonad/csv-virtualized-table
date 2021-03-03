@@ -1,3 +1,8 @@
+## Experimental React component, with which you can upload arbitrary .csv dataset.
+
+Then this data is then parsed and displayed as a table with headers and cells.
+Only rule is that the .csv file MUST contain first row with names of the headers.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
