@@ -10,6 +10,8 @@ In case you don't have your own data, there are two well known datasets included
 
 I used [react-virtualized](https://github.com/bvaughn/react-virtualized) to ease browser with rendering large amounts of data and handy [papaparse](https://www.papaparse.com/) for parsing .csv files.
 
+The working build hosted on Firebase: [https://csv-virtualized-table-f0cfc.web.app/](https://csv-virtualized-table-f0cfc.web.app/)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
